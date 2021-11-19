@@ -1,14 +1,14 @@
 export default class Vector {
   constructor (coords = []) {
-    this.coords = coords;
+    this._coords = coords;
   }
 
   length() {
-    return this.coords.length;
+    return this._coords.length;
   }
 
   neg() {
-    return new Vector(this.coords.map(p => -p));
+    return new Vector(this._coords.map(p => -p));
   }
 
   add(v) {
@@ -28,15 +28,15 @@ export default class Vector {
   }
 
   mulScalar(s) {
-    return new Vector(this.coords.map(p => p * s))
+    return new Vector(this._coords.map(p => p * s))
   }
 
   divScalar(s) {
-    return new Vector(this.coords.map(p => p / s))
+    return new Vector(this._coords.map(p => p / s))
   }
 
   toArray() {
-    return this.coords;
+    return this._coords;
   }
 
   static map(v1, v2, cb) {
