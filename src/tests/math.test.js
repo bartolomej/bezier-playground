@@ -1,4 +1,4 @@
-import { Vector, Bernstein } from "../math";
+import { Vector, Bernstein, Bezier } from "../math";
 
 
 describe('Vector class tests', function () {
@@ -42,6 +42,23 @@ describe('Bernstein class tests', function () {
     const b = new Bernstein(2, 3);
     expect(b.value(0)).toBe(0);
     expect(b.derivative(1)).toBe(-3);
+  });
+
+})
+
+
+describe('Bezier class tests', function () {
+
+  it('should compute a bezier curve', function () {
+    const c = new Bezier([
+      new Vector([0, 0]),
+      new Vector([0, 1]),
+      new Vector([1, 1]),
+      new Vector([1, 0]),
+    ]);
+
+    expect(c.value(0).toArray()).toEqual([0, 0])
+    expect(c.value(1).toArray()).toEqual([1, 0])
   });
 
 })
