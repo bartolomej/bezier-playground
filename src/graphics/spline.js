@@ -1,4 +1,4 @@
-import { Bezier, Spline } from "../math/index.js";
+import { Spline } from "../math/index.js";
 
 
 export default class CubicSplineDrawer {
@@ -6,27 +6,27 @@ export default class CubicSplineDrawer {
   constructor (spline) {
     this.spline = spline || new Spline()
     this.width = 5;
+    this.focusedCurveIndex = null;
+    this.focusedPointIndex = null;
   }
 
-  /**
-   * DRAWING PROCEDURE:
-   * - first pointerdown defines P1
-   * - first pointerup defines C1
-   * - second pointerdown defines P2
-   * - second pointerup defines C1
-   */
-
-  onPointerDown(position) {
+  onPointerDown (position) {
+    if (this.spline.totalPoints === 0) {
+      this.addPoint(position);
+    }
     this.addPoint(position);
   }
 
-  onPointerUp(position) {
+  onPointerUp (position) {
     this.addPoint(position);
   }
 
-  onMouseMove(position) {
-    // TODO: refactor logic and implement "preview" functionality
-    // this.spline.setLastPoint(position);
+  onMouseMove (position) {
+    const { focusedCurveIndex: ci, focusedPointIndex: pi } = this;
+    // if there is a focused point, update it's position
+    if (ci !== null && pi !== null) {
+      this.spline.setPoint(ci, pi, position)
+    }
   }
 
   addPoint (point) {
@@ -38,10 +38,11 @@ export default class CubicSplineDrawer {
 
     const l = this.spline.lastCurve.points.length;
     if (l !== 0 && l % 4 === 0) {
-      console.log("adding additional curve")
       this.spline.addCurve();
     }
 
+    this.focusedCurveIndex = this.spline.lastCurveIndex;
+    this.focusedPointIndex = this.spline.lastCurve.lastPointIndex;
   }
 
   render (ctx) {

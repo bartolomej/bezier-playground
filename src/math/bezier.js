@@ -17,6 +17,10 @@ export default class Bezier {
     return this.points[this.lastPointIndex];
   }
 
+  get length() {
+    return this.points.length;
+  }
+
   addPoint (point) {
     this.points.push(point);
     this._buildFunctions();
