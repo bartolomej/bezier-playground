@@ -1,19 +1,18 @@
 import { Application } from "./common/application.js";
 import { Bezier, Spline, Vector } from "./math/index.js";
-import SplineDrawer from "./graphics/spline.js";
+import CubicSplineDrawer from "./graphics/spline.js";
 
 
 class App extends Application {
   start () {
     this.registerEvents();
-    this.spline = new SplineDrawer(new Spline([
-      new Bezier()
-    ]))
+    this.focusedSplineIndex = 0;
+    this.spline = new CubicSplineDrawer(new Spline())
   }
 
   registerEvents () {
     const { canvas } = this;
-    const mouseEvents = ['click', 'pointerdown', 'pointerup'];
+    const mouseEvents = ['click', 'pointerdown', 'pointerup', 'mousemove'];
     mouseEvents.forEach(eventType => {
       canvas.addEventListener(eventType, this.onMouseEvent.bind(this))
     });
@@ -26,6 +25,8 @@ class App extends Application {
         return this.spline.onPointerDown(position);
       case 'pointerup':
         return this.spline.onPointerUp(position);
+      case 'mousemove':
+        return this.spline.onMouseMove(position);
     }
   }
 

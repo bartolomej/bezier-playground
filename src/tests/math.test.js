@@ -174,18 +174,19 @@ describe('Spline class tests', function () {
       new Bezier([
         new Vector([0, 0]),
         new Vector([0, 1]),
-        new Vector([1, 1]),
+        new Vector([0, 2]),
         new Vector([1, 2]),
       ]),
       new Bezier([
         new Vector([1, 2]),
-        new Vector([1, 3]),
-        new Vector([0, 3]),
-        new Vector([0, 4]),
+        new Vector([2, 2]),
+        new Vector([2, 1]),
+        new Vector([2, 0]),
       ])
     ])
 
+    expect(s.value(0).toArray()).toEqual([0, 0])
     expect(s.value(1).toArray()).toEqual([1, 2])
-    expect(s.value(2).toArray()).toEqual([0, 4]) // TODO: investigate and fix
+    expect(s.value(2).toArray()).toEqual([2, 0])
   });
 })
