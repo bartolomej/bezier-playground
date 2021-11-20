@@ -1,4 +1,4 @@
-import { Vector, Bernstein, Bezier } from "../math";
+import { Vector, Bernstein, Bezier, Spline } from "../math";
 
 
 describe('Vector class tests', function () {
@@ -46,6 +46,8 @@ describe('Bernstein class tests', function () {
 
 })
 
+// use bellow link as a helper tool for testing bezier
+// https://www.desmos.com/calculator/d1ofwre0fr
 
 describe('Bezier class tests', function () {
 
@@ -61,4 +63,27 @@ describe('Bezier class tests', function () {
     expect(c.value(1).toArray()).toEqual([1, 0])
   });
 
+})
+
+describe('Spline class tests', function () {
+
+  it('should calculate value of spline curve', function () {
+    const s = new Spline([
+      new Bezier([
+        new Vector([0,0]),
+        new Vector([0,1]),
+        new Vector([1,1]),
+        new Vector([1,2]),
+      ]),
+      new Bezier([
+        new Vector([1,2]),
+        new Vector([1,3]),
+        new Vector([0,3]),
+        new Vector([0,4]),
+      ])
+    ])
+
+    expect(s.value(1).toArray()).toEqual([1,2])
+    expect(s.value(2).toArray()).toEqual([0,4]) // TODO: investigate and fix
+  });
 })
