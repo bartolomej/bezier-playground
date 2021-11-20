@@ -4,6 +4,10 @@ export default class Spline {
     this._curves = curves;
   }
 
+  size() {
+    return this._curves.length;
+  }
+
   value(t) {
     return this._curves[this._getCurveIndex(t)].value(t);
   }
@@ -21,6 +25,6 @@ export default class Spline {
   }
 
   _getCurveIndex(t) {
-    return Math.floor(t - 1);
+    return Math.floor(t);
   }
 }

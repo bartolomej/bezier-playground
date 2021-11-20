@@ -3,6 +3,12 @@ import { Vector, Bernstein, Bezier, Spline } from "../math";
 
 describe('Vector class tests', function () {
 
+  it('should init vector in two different ways', function () {
+    const v1 = new Vector(1,2,3);
+    const v2 = new Vector([1,2,3]);
+    expect(v1.toArray()).toEqual(v2.toArray());
+  });
+
   it('should add/subtract two vectors', function () {
     const v1 = new Vector([1, 2, 3]);
     const v2 = new Vector([3, 2, 1]);

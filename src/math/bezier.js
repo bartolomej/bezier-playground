@@ -1,5 +1,5 @@
-import Bernstein from "./bernstein";
-import Vector from "./vector";
+import Bernstein from "./bernstein.js";
+import Vector from "./vector.js";
 
 
 export default class Bezier {

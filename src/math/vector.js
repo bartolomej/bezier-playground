@@ -1,6 +1,20 @@
 export default class Vector {
-  constructor (coords = []) {
-    this._coords = coords;
+  constructor (coords, ...rest) {
+    // vector coordinates can be given in an array form: [x,y,z,..]
+    // or in argument list form: x,y,z,..
+    if (coords instanceof Array) {
+      this._coords = coords;
+    } else {
+      this._coords = [coords, ...rest]
+    }
+  }
+
+  get x() {
+    return this._coords[0];
+  }
+
+  get y() {
+    return this._coords[1];
   }
 
   length() {

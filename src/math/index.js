@@ -1,5 +1,7 @@
-export Bernstein from "./bernstein";
-export Vector from "./vector";
-export Bezier from "./bezier";
-export Spline from "./spline";
+import Vector from "./vector.js";
+import Bezier from "./bezier.js";
+import Bernstein from "./bernstein.js";
+import Spline from "./spline.js";
 
+
+export { Vector, Bernstein, Spline, Bezier }
