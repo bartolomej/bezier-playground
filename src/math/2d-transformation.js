@@ -1,5 +1,5 @@
 import Matrix from "./matrix.js";
-import { Vector } from "./index";
+import Vector from "./vector.js";
 
 
 /**
@@ -46,19 +46,19 @@ export default class Transformation2D extends Matrix {
   }
 
   set scaleX (value) {
-    this.setComponent(1, 1, value)
-  }
-
-  get scaleX () {
-    return this.setComponent(1, 1)
-  }
-
-  set scaleY (value) {
     this.setComponent(0, 0, value)
   }
 
-  get scaleY () {
+  get scaleX () {
     return this.setComponent(0, 0)
+  }
+
+  set scaleY (value) {
+    this.setComponent(1, 1, value)
+  }
+
+  get scaleY () {
+    return this.setComponent(1, 1)
   }
 
   set translateX (value) {

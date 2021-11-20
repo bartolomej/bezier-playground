@@ -1,9 +1,11 @@
 import { Application } from "./common/application.js";
 import { Bezier, Spline, Vector } from "./math/index.js";
+import SplineDrawer from "./graphics/spline.js";
 
 class App extends Application {
   start () {
-    this.spline = new Spline([
+    this.registerEvents();
+    this.spline = new SplineDrawer(new Spline([
       new Bezier([
         new Vector([0,0]),
         new Vector([0,1]),
@@ -16,7 +18,19 @@ class App extends Application {
         new Vector([0,3]),
         new Vector([0,4]),
       ].map(v => v.mulScalar(100)))
-    ])
+    ]))
+  }
+
+  registerEvents () {
+    const { canvas } = this;
+    canvas.addEventListener('click', this.onMouseEvent.bind(this))
+    canvas.addEventListener('pointerdown', this.onMouseEvent.bind(this))
+    canvas.addEventListener('pointerup', this.onMouseEvent.bind(this))
+  }
+
+  onMouseEvent(event) {
+    const position = new Vector(event.clientX, event.clientY);
+    this.spline.onMouseEvent(event.type, this.transform(position));
   }
 
   update () {
@@ -24,19 +38,9 @@ class App extends Application {
   }
 
   render () {
-    super.render();
-    this.drawSpline(this.spline);
-  }
-
-  drawSpline(spline) {
     const {ctx} = this;
-    ctx.moveTo(0,0);
-    ctx.beginPath();
-    for (let i = 0; i < spline.size(); i += 0.01) {
-      const v = spline.value(i);
-      ctx.lineTo(v.x, v.y);
-    }
-    ctx.stroke();
+    super.render();
+    this.spline.render(ctx);
   }
 }
 
