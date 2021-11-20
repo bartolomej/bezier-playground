@@ -5,8 +5,23 @@ import Vector from "./vector.js";
 export default class Bezier {
 
   constructor (points = []) {
-    this._functions = points.map((v, i) => new Bernstein(i, points.length - 1));
     this._points = points;
+    this._buildFunctions();
+  }
+
+  get totalPoints() {
+    return this._points.length;
+  }
+
+  addPoint (point) {
+    this._points.push(point);
+    this._buildFunctions();
+  }
+
+  _buildFunctions () {
+    this._functions = this._points.map((v, i) =>
+      new Bernstein(i, this._points.length - 1)
+    );
   }
 
   value (t) {

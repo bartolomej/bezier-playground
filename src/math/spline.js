@@ -1,19 +1,23 @@
 export default class Spline {
 
   constructor (curves = []) {
-    this._curves = curves;
+    this.curves = curves;
+  }
+
+  addPointToEnd(point) {
+    this.curves[this.curves.length - 1].addPoint(point)
   }
 
   size() {
-    return this._curves.length;
+    return this.curves.length;
   }
 
   value(t) {
-    return this._curves[this._getCurveIndex(t)].value(t);
+    return this.curves[this._getCurveIndex(t)].value(t);
   }
 
   derivative(t) {
-    return this._curves[this._getCurveIndex(t)].value(t);
+    return this.curves[this._getCurveIndex(t)].value(t);
   }
 
   makeContinuous() {

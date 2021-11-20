@@ -54,8 +54,20 @@ export class Application {
 
   render () {
     const { ctx, canvas } = this;
+
+    // reset applied transformations
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    // clear existing drawing on canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // apply transformations again (move origin to center + vertical flip)
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.scale(1, -1);
+
+    // begin drawing path
+    ctx.beginPath();
+
     // render code (2d context API calls)
   }
 

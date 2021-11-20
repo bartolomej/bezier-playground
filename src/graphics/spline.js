@@ -1,4 +1,4 @@
-import { Spline } from "../math/index.js";
+import { Bezier, Spline } from "../math/index.js";
 
 
 export default class SplineDrawer {
@@ -16,9 +16,12 @@ export default class SplineDrawer {
    * - second pointerup defines C1
    */
 
-  onMouseEvent (type, position) {
-    console.log(type, position.x, position.y)
-    // TODO: handle event type
+  onPointerDown(position) {
+    this.spline.addPointToEnd(position);
+  }
+
+  onPointerUp(position) {
+    this.spline.addPointToEnd(position);
   }
 
   render (ctx) {
