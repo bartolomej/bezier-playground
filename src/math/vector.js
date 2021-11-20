@@ -9,6 +9,14 @@ export default class Vector {
     }
   }
 
+  setComponent(i, value) {
+    this._coords[i] = value;
+  }
+
+  getComponent(i) {
+    return this._coords[i];
+  }
+
   get x() {
     return this._coords[0];
   }
@@ -39,6 +47,10 @@ export default class Vector {
 
   div(v) {
     return Vector.map(this, v, (p1, p2) => p1 / p2);
+  }
+
+  dotProduct(v) {
+    return this.mul(v).toArray().reduce((p, c) => p + c, 0);
   }
 
   mulScalar(s) {
