@@ -13,6 +13,7 @@ class App extends Application {
     this.penButton = document.querySelector('#pen');
     this.moveButton = document.querySelector('#move');
     this.colorInput = document.querySelector('#color');
+    this.widthInput = document.querySelector('#width');
     this.deleteButton = document.querySelector('#delete');
     this.actionsWrapper = document.querySelector('#actions');
     this.state = null; // "edit" or "draw"
@@ -35,7 +36,7 @@ class App extends Application {
   }
 
   registerEvents () {
-    const { canvas, moveButton, penButton, deleteButton, colorInput } = this;
+    const { canvas, moveButton, penButton, deleteButton, colorInput, widthInput } = this;
     const add = canvas.addEventListener;
 
     add('pointerdown', this.onPointerDown.bind(this));
@@ -48,12 +49,19 @@ class App extends Application {
     moveButton.addEventListener('click', this.onMoveButtonClick.bind(this));
     deleteButton.addEventListener('click', this.onDeleteButtonClick.bind(this));
     colorInput.addEventListener('input', this.onChangeColorInput.bind(this));
+    widthInput.addEventListener('input', this.onChangeWidthInput.bind(this));
   }
 
   onDeleteButtonClick () {
     if (this.focusedSpline !== null) {
       this.splines.splice(this.focusedSplineIndex, 1);
       this.focusedSplineIndex = null;
+    }
+  }
+
+  onChangeWidthInput (event) {
+    if (this.focusedSpline !== null) {
+      this.focusedSpline.changeWidth(+event.target.value);
     }
   }
 
@@ -73,19 +81,25 @@ class App extends Application {
 
   setActionsVisibility(visible) {
     this.actionsWrapper.style.visibility = visible ? 'unset' : 'hidden';
+    if (this.focusedSpline !== null) {
+      this.widthInput.value = this.focusedSpline.width;
+      this.colorInput.value = this.focusedSpline.color;
+    }
   }
 
   setState (state) {
-    const { penButton, moveButton } = this;
+    const { penButton, moveButton, canvas } = this;
     this.state = state;
     this.focusedSplineIndex = null;
     if (state === AppState.EDIT) {
       penButton.classList.remove('focused');
-      moveButton.classList.add('focused')
+      moveButton.classList.add('focused');
+      canvas.style.cursor = 'default';
     }
     if (state === AppState.DRAW) {
       penButton.classList.add('focused');
       moveButton.classList.remove('focused')
+      canvas.style.cursor = 'crosshair';
     }
   }
 

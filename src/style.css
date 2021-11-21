@@ -2,6 +2,10 @@
     --button-size: 50px;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
 }
@@ -20,9 +24,13 @@ button.focused {
     background: #457B9D;
 }
 
-input[type="color"] {
+input[type="color"], input[type="number"] {
     height: var(--button-size);
     width: var(--button-size);
+    margin: 0;
+    border: none;
+    text-align: center;
+    font-size: 20px;
 }
 
 #navbar {

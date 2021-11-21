@@ -8,7 +8,7 @@ export default class CubicSplineDrawer {
     this.width = 5;
     this.pointRadius = 5;
     this.color = '#000000';
-    this.focusedColor = '#d34343';
+    this.focusedColor = '#457B9D';
     this.controlColor = '#5e5e5e';
     this.isFocused = false; // is whole spline focused (selected)
     this.focusedCurveIndex = null;
@@ -20,6 +20,10 @@ export default class CubicSplineDrawer {
     // TODO: iterate over all points and change their position
     // e.g.: point.add(position)
     // console.log("adding position: ", position.x, position.y)
+  }
+
+  changeWidth (value) {
+    this.width = value;
   }
 
   changeColor (value) {
@@ -158,7 +162,7 @@ export default class CubicSplineDrawer {
 
     ctx.beginPath();
     ctx.lineWidth = width;
-    ctx.strokeStyle = isFocused ? focusedColor : color;
+    ctx.strokeStyle = color;
 
     // draw bezier curve
     for (let t = 0; t < spline.size(); t += diff) {
@@ -171,8 +175,8 @@ export default class CubicSplineDrawer {
     }
 
     ctx.stroke();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = controlColor;
+    ctx.lineWidth = isFocused ? 2 : 1;
+    ctx.strokeStyle = isFocused ? focusedColor : controlColor
 
     // draw bezier points
     for (let i = 0; i < spline.curves.length; i++) {
