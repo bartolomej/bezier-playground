@@ -30,6 +30,15 @@ export default class CubicSplineDrawer {
     }
   }
 
+  removeFocusedPoint() {
+    if (this.focusedPointIndex !== null && this.focusedCurveIndex !== null) {
+      // remove unfinished curve from spline
+      this.spline.removeCurve(this.focusedCurveIndex);
+      this.focusedPointIndex = null;
+      this.focusedCurveIndex = null;
+    }
+  }
+
   setPoint(ci, pi, position) {
     // set C(n-1) control point to the negative vector of C(n)
     const isControlPoint = (pi + 1) % 2 === 0;
@@ -65,6 +74,7 @@ export default class CubicSplineDrawer {
     this.focusedCurveIndex = this.spline.lastCurveIndex;
     this.focusedPointIndex = this.spline.lastCurve.lastPointIndex;
   }
+
   render (ctx) {
     const { spline, width } = this;
     const diff = 0.01;

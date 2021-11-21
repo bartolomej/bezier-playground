@@ -19,11 +19,6 @@ export default class Spline {
     return this.curves.map(c => c.length).reduce((p, c) => p = c, 0);
   }
 
-  addPoint (point) {
-    const lastCurveIndex = this.curves.length - 1;
-    this.curves[lastCurveIndex].addPoint(point)
-  }
-
   addCurve () {
     if (this.curves.length === 0) {
       this.curves.push(new Bezier());
@@ -36,13 +31,20 @@ export default class Spline {
     }
   }
 
+  addPoint (point) {
+    const lastCurveIndex = this.curves.length - 1;
+    this.curves[lastCurveIndex].addPoint(point)
+  }
+
   setPoint (curveIndex, pointIndex, point) {
-    if (this.curves.length > 0) {
-      const curve = this.curves[curveIndex];
-      if (curve.points.length > 0) {
-        curve.points[pointIndex] = point;
-      }
+    const curve = this.curves[curveIndex];
+    if (curve && curve.points.length > 0) {
+      curve.points[pointIndex] = point;
     }
+  }
+
+  removeCurve(curveIndex) {
+    this.curves.splice(curveIndex, 1)
   }
 
   getPoint(curveIndex, pointIndex) {

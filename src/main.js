@@ -1,32 +1,56 @@
 import { Application } from "./common/application.js";
-import { Bezier, Spline, Vector } from "./math/index.js";
+import { Spline, Vector } from "./math/index.js";
 import CubicSplineDrawer from "./graphics/spline.js";
 
 
 class App extends Application {
   start () {
     this.registerEvents();
-    this.focusedSplineIndex = 0;
-    this.spline = new CubicSplineDrawer(new Spline())
+    this.focusedSplineIndex = null;
+    this.splines = []
+  }
+
+  get focusedSpline() {
+    if (this.focusedSplineIndex === null) {
+      return null;
+    } else {
+      return this.splines[this.focusedSplineIndex];
+    }
   }
 
   registerEvents () {
     const { canvas } = this;
-    const mouseEvents = ['click', 'pointerdown', 'pointerup', 'mousemove'];
-    mouseEvents.forEach(eventType => {
-      canvas.addEventListener(eventType, this.onMouseEvent.bind(this))
-    });
+    const add = canvas.addEventListener;
+    add('pointerdown', this.onPointerDown.bind(this));
+    add('pointerup', this.onPointerUp.bind(this));
+    add('mousemove', this.onMouseMove.bind(this));
+    document.addEventListener('keydown', this.onKeyDown.bind(this))
   }
 
-  onMouseEvent (event) {
-    const position = this.transform(new Vector(event.clientX, event.clientY));
-    switch (event.type) {
-      case 'pointerdown':
-        return this.spline.onPointerDown(position);
-      case 'pointerup':
-        return this.spline.onPointerUp(position);
-      case 'mousemove':
-        return this.spline.onMouseMove(position);
+  onPointerDown(event) {
+    if (this.focusedSpline === null) {
+      this.splines.push(new CubicSplineDrawer(new Spline()))
+      this.focusedSplineIndex = this.splines.length - 1;
+    }
+    this.focusedSpline.onPointerDown(this._getEventPosition(event));
+  }
+
+  onPointerUp(event) {
+    if (this.focusedSpline !== null) {
+      this.focusedSpline.onPointerUp(this._getEventPosition(event))
+    }
+  }
+
+  onMouseMove() {
+    if (this.focusedSpline !== null) {
+      this.focusedSpline.onMouseMove(this._getEventPosition(event))
+    }
+  }
+
+  onKeyDown(event) {
+    if (event.key === 'Escape' && this.focusedSpline !== null) {
+      this.focusedSpline.removeFocusedPoint();
+      this.focusedSplineIndex = null;
     }
   }
 
@@ -35,9 +59,15 @@ class App extends Application {
   }
 
   render () {
-    const { ctx } = this;
+    const { ctx, splines } = this;
     super.render();
-    this.spline.render(ctx);
+    for (const spline of splines) {
+      spline.render(ctx);
+    }
+  }
+
+  _getEventPosition(event) {
+    return this.transform(new Vector(event.clientX, event.clientY));
   }
 }
 
