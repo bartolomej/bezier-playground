@@ -1,4 +1,4 @@
-import Bernstein from "./bernstein.js";
+import Bernstein from "./Bernstein.js";
 import Vector from "./vector.js";
 
 

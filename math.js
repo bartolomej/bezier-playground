@@ -1,7 +1,7 @@
 import Vector from "./vector.js";
-import Bezier from "./bezier.js";
-import Bernstein from "./bernstein.js";
-import Spline from "./spline.js";
+import Bezier from "./Bezier.js";
+import Bernstein from "./Bernstein.js";
+import Spline from "./Spline.js";
 import Transformation2D from "./transformation.js";
 import Matrix from "./matrix.js";
 
