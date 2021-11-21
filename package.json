@@ -18,7 +18,7 @@
   "scripts": {
     "test": "jest",
     "start": "serve src",
-    "build": "cp -r src docs"
+    "build": "rm -r docs && cp -r src docs"
   },
   "env": {
     "test": {
