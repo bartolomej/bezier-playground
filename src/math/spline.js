@@ -45,6 +45,10 @@ export default class Spline {
     }
   }
 
+  getPoint(curveIndex, pointIndex) {
+    return this.curves[curveIndex].points[pointIndex];
+  }
+
   size () {
     return this.curves.length;
   }
