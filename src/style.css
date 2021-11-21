@@ -4,6 +4,8 @@
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    font-family: Arial, serif;
 }
 
 body {
@@ -56,4 +58,14 @@ input[type="color"], input[type="number"] {
 
 #actions {
     display: flex;
+}
+
+#description {
+    display: flex;
+    align-items: center;
+}
+
+
+#description h3 {
+    color: white;
 }
