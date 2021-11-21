@@ -17,7 +17,8 @@
   },
   "scripts": {
     "test": "jest",
-    "start": "serve src"
+    "start": "serve src",
+    "build": "cp -r src docs"
   },
   "env": {
     "test": {
