@@ -6,6 +6,7 @@ export default class CubicSplineDrawer {
   constructor (spline) {
     this.spline = spline || new Spline()
     this.width = 5;
+    this.color = '#000000';
     this.focusedCurveIndex = null;
     this.focusedPointIndex = null;
   }
@@ -64,12 +65,12 @@ export default class CubicSplineDrawer {
     this.focusedCurveIndex = this.spline.lastCurveIndex;
     this.focusedPointIndex = this.spline.lastCurve.lastPointIndex;
   }
-
   render (ctx) {
     const { spline, width } = this;
     const diff = 0.01;
     ctx.beginPath();
     ctx.lineWidth = width;
+    ctx.strokeStyle = this.color;
 
     // draw bezier curve
     for (let i = 0; i < spline.size(); i += diff) {
@@ -81,7 +82,12 @@ export default class CubicSplineDrawer {
       }
     }
 
+    ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#5e5e5e';
+
     // draw bezier points
+    const r = width * 1.5;
     for (let i = 0; i < spline.curves.length; i++) {
       const curve = spline.curves[i];
       for (let j = 0; j < curve.points.length; j++) {
@@ -90,59 +96,15 @@ export default class CubicSplineDrawer {
           const p0 = curve.points[j - 1];
           ctx.moveTo(p0.x, p0.y);
           ctx.lineTo(p.x, p.y);
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        } else {
+          ctx.moveTo(p.x + r, p.y);
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
         }
-        const r = width * 2;
-        ctx.moveTo(p.x + r, p.y);
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
       }
     }
 
     ctx.stroke();
   }
+
 }
-
-
-// render (ctx) {
-//     const { spline, width } = this;
-//     const diff = 0.01;
-//     ctx.beginPath();
-//     ctx.lineWidth = width;
-//     ctx.fillStyle = "#000000";
-//
-//     // draw bezier curve
-//     for (let i = 0; i < spline.size(); i += diff) {
-//       const v = spline.value(i);
-//       if (i > 0) {
-//         ctx.lineTo(v.x, v.y);
-//       } else {
-//         ctx.moveTo(v.x, v.y);
-//       }
-//     }
-//
-//     ctx.stroke();
-//     ctx.lineWidth = width / 2;
-//
-//     const r = width * 1.5;
-//
-//     // draw bezier points
-//     for (let i = 0; i < spline.curves.length; i++) {
-//       const curve = spline.curves[i];
-//       for (let j = 0; j < curve.points.length; j++) {
-//         const p = curve.points[j];
-//         if (j === 1 || j === 3) {
-//           const p0 = curve.points[j - 1];
-//           ctx.moveTo(p0.x, p0.y);
-//           ctx.lineTo(p.x, p.y);
-//           ctx.fillRect(p.x, p.y, r * 2, r * 2);
-//         } else {
-//           // ctx.beginPath();
-//           ctx.moveTo(p.x + r, p.y);
-//           ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-//           // ctx.closePath();
-//           // ctx.fill();
-//         }
-//       }
-//     }
-//
-//     ctx.stroke();
-//   }
