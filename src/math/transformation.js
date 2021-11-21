@@ -78,7 +78,7 @@ export default class Transformation2D extends Matrix {
   }
 
   transform (v) {
-    const transformation = this.subMatrix(2, 2); // TODO: test
+    const transformation = this.subMatrix(2, 2);
     const translation = new Vector(
       this.translateX,
       this.translateY

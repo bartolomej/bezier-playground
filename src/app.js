@@ -125,9 +125,8 @@ class App extends Application {
     if (this.focusedSpline === null) {
       return;
     }
-    if (this.state === AppState.DRAW) {
-      this.focusedSpline.setFocusedPoint(position)
-    } else {
+    this.focusedSpline.setFocusedPoint(position)
+    if (this.state === AppState.EDIT) {
       this.prevMousePosition = currMousePosition;
       this.currMousePosition = position;
 

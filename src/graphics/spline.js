@@ -13,13 +13,13 @@ export default class CubicSplineDrawer {
     this.isFocused = false; // is whole spline focused (selected)
     this.focusedCurveIndex = null;
     this.focusedPointIndex = null;
-    this.diff = 0.05;
+    this.diff = 0.01;
   }
 
   addPosition(position) {
     // TODO: iterate over all points and change their position
     // e.g.: point.add(position)
-    console.log("adding position: ", position.x, position.y)
+    // console.log("adding position: ", position.x, position.y)
   }
 
   changeColor (value) {
@@ -35,6 +35,7 @@ export default class CubicSplineDrawer {
 
   checkPointIntersections (position) {
     const intersection = this.getPointIntersection(position);
+    console.log('checking point intersection: ', intersection)
     if (intersection !== null) {
       const {ci, pi} = intersection;
       this.focusedCurveIndex = ci;
@@ -47,6 +48,7 @@ export default class CubicSplineDrawer {
 
   getCurveIntersection(position) {
     const { spline, width, diff } = this;
+    console.log('checking curve intersection')
     for (let t = 0; t < spline.size(); t += diff) {
       const v = spline.value(t);
       const diff = v.sub(position).abs();
@@ -99,22 +101,26 @@ export default class CubicSplineDrawer {
   }
 
   setPoint (ci, pi, position) {
+    // lock neighbour control points
     // set C(n-1) control point to the negative vector of C(n)
-    const isControlPoint = (pi + 1) % 2 === 0;
-    if (isControlPoint) {
-      const controlPoint = this.spline.getPoint(ci, pi);
+    const point = this.spline.getPoint(ci, pi);
 
-      // first control point in curve
-      if (pi === 1 && ci > 0) {
-        const prevPoint = this.spline.getPoint(ci - 1, 3);
-        const negVector = controlPoint.sub(prevPoint);
-        this.spline.setPoint(ci - 1, 2, prevPoint.sub(negVector));
-      }
-      // last control point in curve
-      if (pi === 3 && ci < this.spline.lastCurveIndex) {
-        // TODO: implement when existing control point editing is supported
-      }
+    // is first control point in curve
+    if (pi === 1 && ci > 0) {
+      // neighbour point is the last point in previous curve
+      const prevPoint = this.spline.getPoint(ci - 1, 3);
+      const negVector = point.sub(prevPoint);
+      this.spline.setPoint(ci - 1, 2, prevPoint.sub(negVector));
     }
+
+    // is last control point in curve
+    if (pi === 2 && ci < this.spline.lastCurveIndex) {
+      // neighbour control point is the first point in the next curve
+      const nextPoint = this.spline.getPoint(ci, pi + 1);
+      const negVector = point.sub(nextPoint);
+      this.spline.setPoint(ci + 1, 1, nextPoint.sub(negVector));
+    }
+
     this.spline.setPoint(ci, pi, position)
   }
 
