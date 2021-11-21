@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bezier curve playground</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="navbar">
+    <div>
+        <button id="move" itemid="Move curve points">
+            <i class="fas fa-mouse-pointer"></i>
+        </button>
+        <button id="pen" title="Draw curves">
+            <i class="fas fa-pen-nib"></i>
+        </button>
+    </div>
+    <div id="description">
+        <h3>Bezier playground</h3>
+    </div>
+    <div id="actions">
+        <button id="delete" title="Delete curve">
+            <i class="fas fa-trash"></i>
+        </button>
+        <label>
+            <input id="width" type="number" title="Change curve width" />
+        </label>
+        <label>
+            <input id="color" type="color" title="Change curve color" />
+        </label>
+    </div>
+</nav>
+
+<div id="canvas-container">
+    <canvas></canvas>
+</div>
+
+<script type="module" src="app.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
