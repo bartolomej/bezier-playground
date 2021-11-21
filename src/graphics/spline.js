@@ -8,25 +8,68 @@ export default class CubicSplineDrawer {
     this.width = 5;
     this.pointRadius = 5;
     this.color = '#000000';
+    this.focusedColor = '#d34343';
+    this.controlColor = '#5e5e5e';
+    this.isFocused = false; // is whole spline focused (selected)
     this.focusedCurveIndex = null;
     this.focusedPointIndex = null;
+    this.diff = 0.05;
   }
 
-  intersects (position) {
+  addPosition(position) {
+    // TODO: iterate over all points and change their position
+    // e.g.: point.add(position)
+    console.log("adding position: ", position.x, position.y)
+  }
+
+  changeColor (value) {
+    this.color = value;
+  }
+
+  checkCurveIntersection (position) {
+    const intersection = this.getCurveIntersection(position);
+    const isIntersected = intersection !== null;
+    this.isFocused = isIntersected;
+    return isIntersected;
+  }
+
+  checkPointIntersections (position) {
+    const intersection = this.getPointIntersection(position);
+    if (intersection !== null) {
+      const {ci, pi} = intersection;
+      this.focusedCurveIndex = ci;
+      this.focusedPointIndex = pi;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getCurveIntersection(position) {
+    const { spline, width, diff } = this;
+    for (let t = 0; t < spline.size(); t += diff) {
+      const v = spline.value(t);
+      const diff = v.sub(position).abs();
+      if (diff <= width) {
+        return t;
+      }
+    }
+    return null;
+  }
+
+  getPointIntersection(position) {
     const { spline } = this;
     // check if position intersects with any of the spline points
-    for (let i = 0; i < spline.curves.length; i++) {
-      const curve = spline.curves[i];
-      for (let j = 0; j < curve.points.length; j++) {
-        const point = curve.points[j];
+    for (let ci = 0; ci < spline.curves.length; ci++) {
+      const curve = spline.curves[ci];
+      for (let pi = 0; pi < curve.points.length; pi++) {
+        const point = curve.points[pi];
         if (this.intersectsPoint(position, point)) {
-          this.focusedCurveIndex = i;
-          this.focusedPointIndex = j;
-          return true;
+          return {ci, pi}
         }
       }
     }
-    return false;
+    return null;
   }
 
   intersectsPoint (targetV, pointV) {
@@ -42,7 +85,7 @@ export default class CubicSplineDrawer {
     }
   }
 
-  removeUnfinishedCurve() {
+  removeUnfinishedCurve () {
     if (this.focusedPointIndex !== null && this.focusedCurveIndex !== null) {
       // remove unfinished curve from spline
       this.spline.removeCurve(this.focusedCurveIndex);
@@ -96,16 +139,25 @@ export default class CubicSplineDrawer {
   }
 
   render (ctx) {
-    const { spline, width, pointRadius: r } = this;
-    const diff = 0.01;
+    const {
+      spline,
+      width,
+      diff,
+      controlColor,
+      color,
+      focusedColor,
+      isFocused,
+      pointRadius: r
+    } = this;
+
     ctx.beginPath();
     ctx.lineWidth = width;
-    ctx.strokeStyle = this.color;
+    ctx.strokeStyle = isFocused ? focusedColor : color;
 
     // draw bezier curve
-    for (let i = 0; i < spline.size(); i += diff) {
-      const v = spline.value(i);
-      if (i > 0) {
+    for (let t = 0; t < spline.size(); t += diff) {
+      const v = spline.value(t);
+      if (t > 0) {
         ctx.lineTo(v.x, v.y);
       } else {
         ctx.moveTo(v.x, v.y);
@@ -114,7 +166,7 @@ export default class CubicSplineDrawer {
 
     ctx.stroke();
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#5e5e5e';
+    ctx.strokeStyle = controlColor;
 
     // draw bezier points
     for (let i = 0; i < spline.curves.length; i++) {

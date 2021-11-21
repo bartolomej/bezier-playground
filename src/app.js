@@ -12,9 +12,13 @@ class App extends Application {
   start () {
     this.penButton = document.querySelector('#pen');
     this.moveButton = document.querySelector('#move');
+    this.colorInput = document.querySelector('#color');
+    this.deleteButton = document.querySelector('#delete');
     this.state = null; // "edit" or "draw"
     this.focusedSplineIndex = null;
     this.splines = []
+    this.prevMousePosition = null;
+    this.currMousePosition = null;
 
     this.setState(AppState.DRAW);
     this.registerEvents();
@@ -29,7 +33,7 @@ class App extends Application {
   }
 
   registerEvents () {
-    const { canvas, moveButton, penButton } = this;
+    const { canvas, moveButton, penButton, deleteButton, colorInput } = this;
     const add = canvas.addEventListener;
 
     add('pointerdown', this.onPointerDown.bind(this));
@@ -40,6 +44,21 @@ class App extends Application {
 
     penButton.addEventListener('click', this.onPenButtonClick.bind(this));
     moveButton.addEventListener('click', this.onMoveButtonClick.bind(this));
+    deleteButton.addEventListener('click', this.onDeleteButtonClick.bind(this));
+    colorInput.addEventListener('input', this.onChangeColorInput.bind(this));
+  }
+
+  onDeleteButtonClick () {
+    if (this.focusedSpline !== null) {
+      this.splines.splice(this.focusedSplineIndex, 1);
+      this.focusedSplineIndex = null;
+    }
+  }
+
+  onChangeColorInput (event) {
+    if (this.focusedSpline !== null) {
+      this.focusedSpline.changeColor(event.target.value);
+    }
   }
 
   onPenButtonClick () {
@@ -69,7 +88,10 @@ class App extends Application {
 
     if (this.state === AppState.EDIT) {
       for (let i = 0; i < this.splines.length; i++) {
-        if (this.splines[i].intersects(position)) {
+        if (
+          this.splines[i].checkPointIntersections(position) ||
+          this.splines[i].checkCurveIntersection(position)
+        ) {
           this.focusedSplineIndex = i;
           break;
         }
@@ -97,8 +119,23 @@ class App extends Application {
   }
 
   onMouseMove (event) {
-    if (this.focusedSpline !== null) {
-      this.focusedSpline.setFocusedPoint(this._getEventPosition(event))
+    const {prevMousePosition, currMousePosition} = this;
+    const position = this._getEventPosition(event);
+
+    if (this.focusedSpline === null) {
+      return;
+    }
+    if (this.state === AppState.DRAW) {
+      this.focusedSpline.setFocusedPoint(position)
+    } else {
+      this.prevMousePosition = currMousePosition;
+      this.currMousePosition = position;
+
+      const intersection = this.focusedSpline.getCurveIntersection(position);
+      if (intersection !== null && prevMousePosition !== null) {
+        const positionChange = currMousePosition.sub(prevMousePosition);
+        this.focusedSpline.addPosition(positionChange);
+      }
     }
   }
 
