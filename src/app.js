@@ -14,6 +14,7 @@ class App extends Application {
     this.moveButton = document.querySelector('#move');
     this.colorInput = document.querySelector('#color');
     this.deleteButton = document.querySelector('#delete');
+    this.actionsWrapper = document.querySelector('#actions');
     this.state = null; // "edit" or "draw"
     this.focusedSplineIndex = null;
     this.splines = []
@@ -21,6 +22,7 @@ class App extends Application {
     this.currMousePosition = null;
 
     this.setState(AppState.DRAW);
+    this.setActionsVisibility(false);
     this.registerEvents();
   }
 
@@ -69,33 +71,41 @@ class App extends Application {
     this.setState(AppState.EDIT);
   }
 
+  setActionsVisibility(visible) {
+    this.actionsWrapper.style.visibility = visible ? 'unset' : 'hidden';
+  }
+
   setState (state) {
     const { penButton, moveButton } = this;
     this.state = state;
     this.focusedSplineIndex = null;
     if (state === AppState.EDIT) {
-      penButton.style.backgroundColor = 'transparent';
-      moveButton.style.backgroundColor = 'red';
+      penButton.classList.remove('focused');
+      moveButton.classList.add('focused')
     }
     if (state === AppState.DRAW) {
-      moveButton.style.backgroundColor = 'transparent';
-      penButton.style.backgroundColor = 'red';
+      penButton.classList.add('focused');
+      moveButton.classList.remove('focused')
     }
   }
 
   onPointerDown (event) {
     const position = this._getEventPosition(event);
 
+    let isAnySplineFocused = false;
     if (this.state === AppState.EDIT) {
       for (let i = 0; i < this.splines.length; i++) {
+        const spline = this.splines[i];
         if (
-          this.splines[i].checkPointIntersections(position) ||
-          this.splines[i].checkCurveIntersection(position)
+          spline.checkPointIntersections(position) ||
+          spline.checkCurveIntersection(position)
         ) {
           this.focusedSplineIndex = i;
+          isAnySplineFocused = spline.isFocused;
           break;
         }
       }
+      this.setActionsVisibility(isAnySplineFocused);
     }
 
     if (this.state === AppState.DRAW) {

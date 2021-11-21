@@ -9,14 +9,19 @@
 
 <nav id="navbar">
     <div>
-        <button id="move">Move</button>
-        <button id="pen">Pen</button>
+        <button id="move" itemid="Move curve points">
+            <i class="fas fa-mouse-pointer"></i>
+        </button>
+        <button id="pen" title="Draw curves">
+            <i class="fas fa-pen-nib"></i>
+        </button>
     </div>
-    <div>
-        <button id="delete">Delete</button>
+    <div id="actions">
+        <button id="delete" title="Delete curve">
+            <i class="fas fa-trash"></i>
+        </button>
         <label>
-            Color
-            <input id="color" type="color" />
+            <input id="color" type="color" title="Change curve color" />
         </label>
     </div>
 </nav>
@@ -26,5 +31,6 @@
 </div>
 
 <script type="module" src="app.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

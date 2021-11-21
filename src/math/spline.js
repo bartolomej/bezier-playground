@@ -61,7 +61,7 @@ export default class Spline {
   }
 
   derivative (t) {
-    return this.curves[this._getCurveIndex(t)].value(t);
+    return this.curves[this._getCurveIndex(t)].derivative(t);
   }
 
   makeContinuous () {
