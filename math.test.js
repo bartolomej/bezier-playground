@@ -1,4 +1,4 @@
-import { Vector, Matrix, Bernstein, Bezier, Spline, Transformation2D } from "../math";
+import { Vector, Matrix, Bernstein, Bezier, Spline, Transformation2D } from "./math";
 
 
 describe('Vector class tests', function () {

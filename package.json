@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Create and visualize bezier curves",
-  "main": "index.js",
+  "main": "math.js",
   "repository": "https://github.com/bartolomej/bezier-playground",
   "author": "Bartolomej Kozorog <bartolomej.kozorog@gmail.com>",
   "license": "MIT",
