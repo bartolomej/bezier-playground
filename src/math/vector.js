@@ -9,63 +9,71 @@ export default class Vector {
     }
   }
 
-  setComponent(i, value) {
+  setComponent (i, value) {
     this._coords[i] = value;
   }
 
-  getComponent(i) {
+  getComponent (i) {
     return this._coords[i];
   }
 
-  get x() {
+  get x () {
     return this._coords[0];
   }
 
-  get y() {
+  get y () {
     return this._coords[1];
   }
 
-  length() {
+  length () {
     return this._coords.length;
   }
 
-  neg() {
+  neg () {
     return new Vector(this._coords.map(p => -p));
   }
 
-  add(v) {
+  add (v) {
     return Vector.map(this, v, (p1, p2) => p1 + p2);
   }
 
-  sub(v) {
+  sub (v) {
     return Vector.map(this, v, (p1, p2) => p1 - p2);
   }
 
-  mul(v) {
+  mul (v) {
     return Vector.map(this, v, (p1, p2) => p1 * p2);
   }
 
-  div(v) {
+  div (v) {
     return Vector.map(this, v, (p1, p2) => p1 / p2);
   }
 
-  dotProduct(v) {
+  dotProduct (v) {
     return this.mul(v).toArray().reduce((p, c) => p + c, 0);
   }
 
-  mulScalar(s) {
+  mulScalar (s) {
     return new Vector(this._coords.map(p => p * s))
   }
 
-  divScalar(s) {
+  divScalar (s) {
     return new Vector(this._coords.map(p => p / s))
   }
 
-  toArray() {
+  toArray () {
     return this._coords;
   }
 
-  static map(v1, v2, cb) {
+  abs () {
+    return Math.sqrt(
+      this._coords
+        .map(p => Math.pow(p, 2))
+        .reduce((p, c) => p + c, 0),
+    );
+  }
+
+  static map (v1, v2, cb) {
     if (v1.length() !== v2.length()) {
       throw new Error("Vectors must have equal length");
     }

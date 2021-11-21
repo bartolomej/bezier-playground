@@ -6,23 +6,35 @@ export default class CubicSplineDrawer {
   constructor (spline) {
     this.spline = spline || new Spline()
     this.width = 5;
+    this.pointRadius = 5;
     this.color = '#000000';
     this.focusedCurveIndex = null;
     this.focusedPointIndex = null;
   }
 
-  onPointerDown (position) {
-    if (this.spline.totalPoints === 0) {
-      this.addPoint(position);
+  intersects (position) {
+    const { spline } = this;
+    // check if position intersects with any of the spline points
+    for (let i = 0; i < spline.curves.length; i++) {
+      const curve = spline.curves[i];
+      for (let j = 0; j < curve.points.length; j++) {
+        const point = curve.points[j];
+        if (this.intersectsPoint(position, point)) {
+          this.focusedCurveIndex = i;
+          this.focusedPointIndex = j;
+          return true;
+        }
+      }
     }
-    this.addPoint(position);
+    return false;
   }
 
-  onPointerUp (position) {
-    this.addPoint(position);
+  intersectsPoint (targetV, pointV) {
+    const diff = targetV.sub(pointV);
+    return diff.abs() <= this.width;
   }
 
-  onMouseMove (position) {
+  setFocusedPoint (position) {
     const { focusedCurveIndex: ci, focusedPointIndex: pi } = this;
     // if there is a focused point, update it's position
     if (ci !== null && pi !== null) {
@@ -30,16 +42,20 @@ export default class CubicSplineDrawer {
     }
   }
 
-  removeFocusedPoint() {
+  removeUnfinishedCurve() {
     if (this.focusedPointIndex !== null && this.focusedCurveIndex !== null) {
       // remove unfinished curve from spline
       this.spline.removeCurve(this.focusedCurveIndex);
-      this.focusedPointIndex = null;
-      this.focusedCurveIndex = null;
+      this.removeFocusedPoint();
     }
   }
 
-  setPoint(ci, pi, position) {
+  removeFocusedPoint () {
+    this.focusedPointIndex = null;
+    this.focusedCurveIndex = null;
+  }
+
+  setPoint (ci, pi, position) {
     // set C(n-1) control point to the negative vector of C(n)
     const isControlPoint = (pi + 1) % 2 === 0;
     if (isControlPoint) {
@@ -64,6 +80,10 @@ export default class CubicSplineDrawer {
       this.spline.addCurve();
     }
 
+    if (this.spline.totalPoints === 0) {
+      this.spline.addPoint(point);
+    }
+
     this.spline.addPoint(point);
 
     const l = this.spline.lastCurve.points.length;
@@ -76,7 +96,7 @@ export default class CubicSplineDrawer {
   }
 
   render (ctx) {
-    const { spline, width } = this;
+    const { spline, width, pointRadius: r } = this;
     const diff = 0.01;
     ctx.beginPath();
     ctx.lineWidth = width;
@@ -97,7 +117,6 @@ export default class CubicSplineDrawer {
     ctx.strokeStyle = '#5e5e5e';
 
     // draw bezier points
-    const r = width * 1.5;
     for (let i = 0; i < spline.curves.length; i++) {
       const curve = spline.curves[i];
       for (let j = 0; j < curve.points.length; j++) {

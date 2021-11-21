@@ -27,6 +27,16 @@ describe('Vector class tests', function () {
     expect(v1.dotProduct(v2)).toEqual(3)
   });
 
+  it('should calculate absolute size of vector', function () {
+    const v1 = new Vector(1,0);
+    const v2 = new Vector(0,1);
+    const v3 = new Vector(1,1);
+
+    expect(v1.abs()).toBe(1);
+    expect(v2.abs()).toBe(1);
+    expect(v3.abs()).toBe(Math.sqrt(2));
+  });
+
 });
 
 // use bellow tool for playing around with transformations
