@@ -1,5 +1,5 @@
 import { Application } from "./application.js";
-import { Spline, Vector } from "./index.js";
+import { Spline } from "./index.js";
 import CubicSplineDrawer from "./cubic-spline.js";
 
 
@@ -182,7 +182,7 @@ class App extends Application {
   }
 
   _getEventPosition (event) {
-    return this.transform(new Vector(event.clientX, event.clientY));
+    return this.transform([event.clientX, event.clientY]);
   }
 }
 

@@ -1,84 +1,76 @@
-export default class Vector {
-  constructor (coords, ...rest) {
-    // vector coordinates can be given in an array form: [x,y,z,..]
-    // or in argument list form: x,y,z,..
-    if (coords instanceof Array) {
-      this._coords = coords;
-    } else {
-      this._coords = [coords, ...rest]
+// Return vectors as arrays, e.g.:
+// return [ 1, 2, 3, 4 ];
+
+export function initZeroVector(dimension) {
+    return Array.from({ length: dimension}).map(() => 0)
+}
+
+export function negate(v) {
+    return v.map(e => -e);
+}
+
+export function add(v, w) {
+    return v.map((e, i) => e + w[i]);
+}
+
+export function subtract(v, w) {
+    return add(v, negate(w));
+}
+
+export function multiply(v, w) {
+    return v.map((e, i) => e * w[i]);
+}
+
+export function divide(v, w) {
+    return multiply(v, inverse(w))
+}
+
+export function dot(v, w) {
+    return multiply(v, w).reduce((sum, e) => sum + e, 0);
+}
+
+export function cross(v, w) {
+    if (v.length !== 3 || w.length !== 3) {
+        throw new Error("Cross product is only defined for 3d vectors")
     }
-  }
+    return [
+        v[1] * w[2] - v[2] * w[1],
+        v[2] * w[0] - v[0] * w[2],
+        v[0] * w[1] - v[1] * w[0],
+    ]
+}
 
-  setComponent (i, value) {
-    this._coords[i] = value;
-  }
+export function length(v) {
+    return Math.sqrt(v.map(e => e ** 2).reduce((sum, e) => sum + e, 0))
+}
 
-  getComponent (i) {
-    return this._coords[i];
-  }
+export function normalize(v) {
+    return multiply(v, inverse(v));
+}
 
-  get x () {
-    return this._coords[0];
-  }
+export function project(v, w) {
+    return multiplyScalar(w, dot(v, w) / length(w) ** 2);
+}
 
-  get y () {
-    return this._coords[1];
-  }
+export function reflect(d, n) {
+    return subtract(d, multiplyScalar(n, (dot(d, n) * 2) / length(n) ** 2))
+}
 
-  length () {
-    return this._coords.length;
-  }
+export function angle(v, w) {
+    // The result of the inner expression may have numerical errors,
+    // so it can cause acos to return NaN if the value is outside its defined domain.
+    // To avoid that, let's clamp the value to the min/max domain range.
+    return Math.acos(clamp(dot(v, w) / (length(v) * length(w)), -1, 1))
+}
 
-  neg () {
-    return new Vector(this._coords.map(p => -p));
-  }
+export function multiplyScalar(v, k) {
+    return v.map(v => v * k)
+}
 
-  add (v) {
-    return Vector.map(this, v, (p1, p2) => p1 + p2);
-  }
+function inverse(v) {
+    return v.map((e) => 1 / e);
+}
 
-  sub (v) {
-    return Vector.map(this, v, (p1, p2) => p1 - p2);
-  }
-
-  mul (v) {
-    return Vector.map(this, v, (p1, p2) => p1 * p2);
-  }
-
-  div (v) {
-    return Vector.map(this, v, (p1, p2) => p1 / p2);
-  }
-
-  dotProduct (v) {
-    return this.mul(v).toArray().reduce((p, c) => p + c, 0);
-  }
-
-  mulScalar (s) {
-    return new Vector(this._coords.map(p => p * s))
-  }
-
-  divScalar (s) {
-    return new Vector(this._coords.map(p => p / s))
-  }
-
-  toArray () {
-    return this._coords;
-  }
-
-  abs () {
-    return Math.sqrt(
-      this._coords
-        .map(p => Math.pow(p, 2))
-        .reduce((p, c) => p + c, 0),
-    );
-  }
-
-  static map (v1, v2, cb) {
-    if (v1.length() !== v2.length()) {
-      throw new Error("Vectors must have equal length");
-    }
-    const coords1 = v1.toArray();
-    const coords2 = v2.toArray();
-    return new Vector(coords1.map((p1, i) => cb(p1, coords2[i])))
-  }
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max)
 }

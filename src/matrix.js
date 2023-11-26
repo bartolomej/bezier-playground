@@ -1,74 +1,161 @@
-import Vector from "./vector.js";
+// Return matrices as 2D arrays in row-major order, e.g.:
+// return [
+//     [ 1, 2, 3, 4 ],
+//     [ 5, 6, 7, 8 ],
+//     [ 7, 6, 5, 4 ],
+//     [ 3, 2, 1, 0 ],
+// ];
 
+import {dot} from "./vector.js";
 
-export default class Matrix {
-  constructor (cols, ...rest) {
-    this.setMatrix(cols, ...rest);
-  }
+/**
+ * Takes in transformation matrices of the same dimensions and multiples them.
+ * @param matrices {Array[]}
+ */
+export function composeTransformations(matrices) {
+    return matrices.reduce((composed, m) => multiply(composed, m), identity(getDimensions(matrices[0])))
+}
 
-  setComponent(col, row, value) {
-    this._cols[col].setComponent(row, value);
-  }
-
-  getComponent(col, row) {
-    return this._cols[col].getComponent(row);
-  }
-
-  setMatrix(cols, ...rest) {
-    // matrix columns can be given in an array form: [v1,v2,v3,..]
-    // or in argument list form: v1,v2,v3,..
-    if (cols instanceof Array) {
-      this._cols = this._serialiseCols(cols);
-    } else {
-      this._cols = this._serialiseCols([cols, ...rest])
+export function identity({cols, rows} = {rows: 4, cols: 4}) {
+    const m = [];
+    for (let r = 0; r < rows; r++) {
+        m.push(Array.from({length: cols}).map((_, i) => i === r ? 1 : 0))
     }
-  }
+    return m;
+}
 
-  _serialiseCols(cols) {
-     if (cols[0] instanceof Vector) {
-       return cols;
-     } else {
-       return cols.map(col => new Vector(col));
-     }
-  }
 
-  subMatrix(col, row) {
-    return new Matrix(
-      this._cols
-        .slice(0, col)
-        .map(v => v.toArray().slice(0, row))
-    )
-  }
+export function translation(t) {
+    const r = identity({
+        rows: t.length + 1,
+        cols: t.length + 1
+    });
 
-  get rows() {
-    return this._cols[0].length();
-  }
-
-  get cols() {
-    return this._cols.length;
-  }
-
-  row(i) {
-    return new Vector(this._cols.map(v => v.toArray()[i]));
-  }
-
-  col(i) {
-    return this._cols[i];
-  }
-
-  multiplyVector(v) {
-    if (this.cols !== v.length()) {
-      throw new Error("Invalid vector size")
+    for (let i = 0; i < t.length; i++) {
+        r[i][t.length] = t[i];
     }
-    let result = [];
-    for (let ri = 0; ri < this.rows; ri++) {
-      const row = this.row(ri);
-      result.push(v.dotProduct(row));
-    }
-    return new Vector(result);
-  }
 
-  toArray() {
-    return this._cols.map(v => v.toArray());
-  }
+    return r;
+}
+
+export function scaling(s) {
+    const r = identity({rows: s.length, cols: s.length});
+    for (let i = 0; i < s.length; i++) {
+        r[i][i] = s[i];
+    }
+    return r;
+}
+
+export function rotationX(angle) {
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+    return [
+        [1, 0, 0, 0],
+        [0, cosA, -sinA, 0],
+        [0, sinA, cosA, 0],
+        [0, 0, 0, 1],
+    ];
+}
+
+export function rotationY(angle) {
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+    return [
+        [cosA, 0, sinA, 0],
+        [0, 1, 0, 0],
+        [-sinA, 0, cosA, 0],
+        [0, 0, 0, 1],
+    ];
+}
+
+export function rotationZ(angle) {
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+    return [
+        [cosA, -sinA, 0, 0],
+        [sinA, cosA, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+    ];
+}
+
+export function negate(m) {
+    return m.map(row => row.map(e => -e));
+}
+
+export function add(m, n) {
+    const dimensions = getDimensions(m);
+    const r = identity(dimensions);
+    for (let row = 0; row < dimensions.rows; row++) {
+        for (let col = 0; col < dimensions.cols; col++) {
+            r[row][col] = m[row][col] + n[row][col];
+        }
+    }
+    return r;
+}
+
+export function subtract(m, n) {
+    return add(m, negate(n));
+}
+
+export function transpose(m) {
+    const {rows, cols} = getDimensions(m)
+    const tm = identity({
+        cols: rows,
+        rows: cols
+    });
+
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            tm[col][row] = m[row][col];
+        }
+    }
+
+    return tm;
+}
+
+export function multiply(m, n) {
+    const mDim = getDimensions(m);
+    const nDim = getDimensions(n);
+    if (mDim.cols !== nDim.rows) {
+        throw new Error("Invalid input matrices. The number of columns of `m` must match the number of rows of `n`.")
+    }
+    const r = identity({
+        cols: nDim.cols,
+        rows: mDim.rows
+    });
+    for (let col = 0; col < nDim.cols; col++) {
+        for (let row = 0; row < mDim.rows; row++) {
+            r[row][col] = dot(
+                getRow(m, row),
+                getCol(n, col)
+            )
+        }
+    }
+    return r;
+}
+
+export function transform(m, v) {
+    return multiply(m, v.map(e => [e])).flat();
+}
+
+// Helpers
+
+function getDimensions(m) {
+    return {
+        rows: m.length,
+        cols: m[0].length
+    }
+}
+
+function getRow(m, row) {
+    return m[row];
+}
+
+function getCol(m, col) {
+    const column = [];
+    for (let row = 0; row < m.length; row++) {
+        column.push(m[row][col])
+    }
+    return column;
 }

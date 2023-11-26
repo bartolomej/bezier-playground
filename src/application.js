@@ -1,9 +1,9 @@
-import { Transformation2D } from "./index.js";
+import {composeTransformations, scaling, translation, transform} from "./matrix.js";
 
 
 export class Application {
 
-  constructor (canvas, options) {
+  constructor (canvas, options = {}) {
     this.onTick = this.onTick.bind(this);
 
     this.canvas = canvas;
@@ -71,14 +71,20 @@ export class Application {
     // render code (2d context API calls)
   }
 
+  /**
+   * @param v {Array[2]} 2D point to transform.
+   */
   transform (v) {
     const { canvas } = this;
-    const scale = new Transformation2D();
-    scale.scaleY = -1;
-    const translate = new Transformation2D();
-    translate.translateX = - canvas.width / 2;
-    translate.translateY = - canvas.height / 2;
-    return scale.transform(translate.transform(v));
+    const [x, y, k] = transform(composeTransformations([
+      translation([-canvas.width / 2, canvas.height / 2]),
+      scaling([1, -1, 1]),
+    ]), [...v, 1]);
+
+    return [
+      x / k,
+      y / k,
+    ]
   }
 
   resize () {

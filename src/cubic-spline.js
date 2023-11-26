@@ -1,4 +1,5 @@
 import { Spline } from "./index.js";
+import {length, subtract} from "./vector.js";
 
 
 export default class CubicSplineDrawer {
@@ -19,7 +20,6 @@ export default class CubicSplineDrawer {
   addPosition(position) {
     // TODO: iterate over all points and change their position
     // e.g.: point.add(position)
-    // console.log("adding position: ", position.x, position.y)
   }
 
   changeWidth (value) {
@@ -54,8 +54,7 @@ export default class CubicSplineDrawer {
     const { spline, width, diff } = this;
     console.log('checking curve intersection')
     for (let t = 0; t < spline.size(); t += diff) {
-      const v = spline.value(t);
-      const diff = v.sub(position).abs();
+      const diff = length(subtract(spline.value(t), position))
       if (diff <= width) {
         return t;
       }
@@ -69,18 +68,13 @@ export default class CubicSplineDrawer {
     for (let ci = 0; ci < spline.curves.length; ci++) {
       const curve = spline.curves[ci];
       for (let pi = 0; pi < curve.points.length; pi++) {
-        const point = curve.points[pi];
-        if (this.intersectsPoint(position, point)) {
+        const isIntersection = length(subtract(position, curve.points[pi])) <= this.width;
+        if (isIntersection) {
           return {ci, pi}
         }
       }
     }
     return null;
-  }
-
-  intersectsPoint (targetV, pointV) {
-    const diff = targetV.sub(pointV);
-    return diff.abs() <= this.width;
   }
 
   setFocusedPoint (position) {
@@ -113,16 +107,16 @@ export default class CubicSplineDrawer {
     if (pi === 1 && ci > 0) {
       // neighbour point is the last point in previous curve
       const prevPoint = this.spline.getPoint(ci - 1, 3);
-      const negVector = point.sub(prevPoint);
-      this.spline.setPoint(ci - 1, 2, prevPoint.sub(negVector));
+      const negVector = subtract(point, prevPoint)
+      this.spline.setPoint(ci - 1, 2, subtract(prevPoint, negVector));
     }
 
     // is last control point in curve
     if (pi === 2 && ci < this.spline.lastCurveIndex) {
       // neighbour control point is the first point in the next curve
       const nextPoint = this.spline.getPoint(ci, pi + 1);
-      const negVector = point.sub(nextPoint);
-      this.spline.setPoint(ci + 1, 1, nextPoint.sub(negVector));
+      const negVector = subtract(point, nextPoint)
+      this.spline.setPoint(ci + 1, 1, subtract(nextPoint, negVector));
     }
 
     this.spline.setPoint(ci, pi, position)
@@ -168,9 +162,9 @@ export default class CubicSplineDrawer {
     for (let t = 0; t < spline.size(); t += diff) {
       const v = spline.value(t);
       if (t > 0) {
-        ctx.lineTo(v.x, v.y);
+        ctx.lineTo(v[0], v[1]);
       } else {
-        ctx.moveTo(v.x, v.y);
+        ctx.moveTo(v[0], v[1]);
       }
     }
 
@@ -185,12 +179,12 @@ export default class CubicSplineDrawer {
         const p = curve.points[j];
         if (j === 1 || j === 3) {
           const p0 = curve.points[j - 1];
-          ctx.moveTo(p0.x, p0.y);
-          ctx.lineTo(p.x, p.y);
-          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.moveTo(p0[0], p0[1]);
+          ctx.lineTo(p[0], p[1]);
+          ctx.arc(p[0], p[1], r, 0, Math.PI * 2);
         } else {
-          ctx.moveTo(p.x + r, p.y);
-          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.moveTo(p[0] + r, p[1]);
+          ctx.arc(p[0], p[1], r, 0, Math.PI * 2);
         }
       }
     }

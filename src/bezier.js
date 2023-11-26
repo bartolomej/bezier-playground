@@ -1,11 +1,12 @@
 import Bernstein from "./bernstein.js";
-import Vector from "./vector.js";
+import {add, initZeroVector, multiplyScalar} from "./vector.js";
 
 
 export default class Bezier {
 
   /**
    * Create a Bézier curve given a list of points.
+   * @param points {Array[]}
    */
   constructor (points = []) {
     this.points = points;
@@ -20,21 +21,32 @@ export default class Bezier {
     return this.points.length;
   }
 
+  get dimension() {
+    // Assuming all point vectors have the same dimension.
+    return this.points[0].length;
+  }
+
   addPoint (point) {
     this.points.push(point);
     this._buildFunctions();
   }
 
+  /**
+   * Point position at t=[0,1]
+   */
   value (t) {
     return this.points
-      .map((v, i) => v.mulScalar(this._functions[i].value(t)))
-      .reduce((p, c) => p.add(c), new Vector([0, 0]));
+      .map((v, i) => multiplyScalar(v, this._functions[i].value(t)))
+      .reduce((p, c) => add(p, c), initZeroVector(this.dimension));
   }
 
+  /**
+   * Point derivative at t=[0,1].
+   */
   derivative (t) {
     return this.points
-      .map((v, i) => v.mulScalar(this._functions[i].derivative(t)))
-      .reduce((p, c) => p.add(c), new Vector([0, 0]));
+      .map((v, i) => multiplyScalar(v, this._functions[i].derivative(t)))
+      .reduce((p, c) => add(p, c), initZeroVector(this.dimension));
   }
 
   _buildFunctions () {
