@@ -1,6 +1,7 @@
-import { Application } from "./common/application.js";
-import { Spline, Vector } from "./math/index.js";
-import CubicSplineDrawer from "./graphics/spline.js";
+import { Application } from "./application.js";
+import { Spline } from "./index.js";
+import Bezier2d from "./bezier-2d.js";
+import {subtract} from "./vector.js";
 
 
 const AppState = {
@@ -124,7 +125,7 @@ class App extends Application {
 
     if (this.state === AppState.DRAW) {
       if (this.focusedSpline === null) {
-        this.splines.push(new CubicSplineDrawer(new Spline()))
+        this.splines.push(new Bezier2d(new Spline()))
         this.focusedSplineIndex = this.splines.length - 1;
       }
       this.focusedSpline.addPoint(position);
@@ -156,7 +157,7 @@ class App extends Application {
 
       const intersection = this.focusedSpline.getCurveIntersection(position);
       if (intersection !== null && prevMousePosition !== null) {
-        const positionChange = currMousePosition.sub(prevMousePosition);
+        const positionChange = subtract(currMousePosition, prevMousePosition);
         this.focusedSpline.addPosition(positionChange);
       }
     }
@@ -182,7 +183,7 @@ class App extends Application {
   }
 
   _getEventPosition (event) {
-    return this.transform(new Vector(event.clientX, event.clientY));
+    return this.transform([event.clientX, event.clientY]);
   }
 }
 
