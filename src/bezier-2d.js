@@ -1,6 +1,5 @@
 import { Spline } from "./index.js";
 import {length, subtract} from "./vector.js";
-import {identity} from "./matrix.js";
 
 
 export default class Bezier2d {
@@ -11,7 +10,6 @@ export default class Bezier2d {
     this.pointRadius = 5;
     this.color = '#000000';
     this.focusedColor = '#457B9D';
-    this.controlColor = '#5e5e5e';
     this.isFocused = false; // is whole spline focused (selected)
     this.focusedCurveIndex = null;
     this.focusedPointIndex = null;
@@ -19,8 +17,7 @@ export default class Bezier2d {
   }
 
   addPosition(position) {
-    // TODO: iterate over all points and change their position
-    // e.g.: point.add(position)
+    // TODO: Implement
   }
 
   changeWidth (value) {
@@ -148,7 +145,6 @@ export default class Bezier2d {
       spline,
       width,
       diff,
-      controlColor,
       color,
       focusedColor,
       isFocused,
@@ -171,7 +167,7 @@ export default class Bezier2d {
 
     ctx.stroke();
     ctx.lineWidth = isFocused ? 2 : 1;
-    ctx.strokeStyle = isFocused ? focusedColor : controlColor
+    ctx.strokeStyle = isFocused ? focusedColor : color
 
     // draw control points
     for (let i = 0; i < spline.curves.length; i++) {
