@@ -1,4 +1,5 @@
 import { Vector, Matrix, Bernstein, Bezier, Spline, Transformation2D } from "./index.js";
+import { Utils } from "./utils.js"
 
 
 describe('Vector class tests', function () {
@@ -129,29 +130,31 @@ describe('2dTransformation class tests', function () {
 
 })
 
-describe('Bernstein class tests', function () {
-
+describe('Utils class tests', function () {
   it('should calculate factorial of n', function () {
-    expect(Bernstein.factorial(1)).toBe(1);
-    expect(Bernstein.factorial(5)).toBe(120);
+    expect(Utils.factorial(1)).toBe(1);
+    expect(Utils.factorial(5)).toBe(120);
   });
 
   it('should calculate binomial coefficient', function () {
-    expect(Bernstein.binomial(5, 5)).toBe(1);
-    expect(Bernstein.binomial(5, 1)).toBe(5);
-    expect(Bernstein.binomial(5, 3)).toBe(10);
+    expect(Utils.binomial(5, 5)).toBe(1);
+    expect(Utils.binomial(5, 1)).toBe(5);
+    expect(Utils.binomial(5, 3)).toBe(10);
   });
+})
+
+describe('Bernstein class tests', function () {
 
   it('should build and calculate polynomial function', function () {
     // test example taken from https://en.wikipedia.org/wiki/Bernstein_polynomial#Definition
-    const b = new Bernstein(2, 5);
+    const b = new Bernstein(5, 2);
     expect(b.value(0)).toBe(0);
     expect(b.value(1)).toBe(0);
     expect(b.value(2)).toBe(-40);
   });
 
   it('should calculate polynomial derivative', function () {
-    const b = new Bernstein(2, 3);
+    const b = new Bernstein(3, 2);
     expect(b.value(0)).toBe(0);
     expect(b.derivative(1)).toBe(-3);
   });

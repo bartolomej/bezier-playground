@@ -4,13 +4,13 @@ import { Transformation2D } from "./index.js";
 export class Application {
 
   constructor (canvas, options) {
-    this._update = this._update.bind(this);
+    this.onTick = this.onTick.bind(this);
 
     this.canvas = canvas;
     this._init2d(options);
     this.start();
 
-    requestAnimationFrame(this._update);
+    requestAnimationFrame(this.onTick);
   }
 
   _init2d (options) {
@@ -25,14 +25,14 @@ export class Application {
     }
   }
 
-  _update () {
-    this._resize();
+  onTick () {
+    this.#optionallyResize();
     this.update();
     this.render();
-    requestAnimationFrame(this._update);
+    requestAnimationFrame(this.onTick);
   }
 
-  _resize () {
+  #optionallyResize () {
     const canvas = this.canvas;
 
     if (canvas.width !== canvas.clientWidth ||

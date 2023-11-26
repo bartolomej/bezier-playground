@@ -4,6 +4,9 @@ import Vector from "./vector.js";
 
 export default class Bezier {
 
+  /**
+   * Create a Bézier curve given a list of points.
+   */
   constructor (points = []) {
     this.points = points;
     this._buildFunctions();
@@ -13,10 +16,6 @@ export default class Bezier {
     return this.points.length - 1;
   }
 
-  get lastPoint() {
-    return this.points[this.lastPointIndex];
-  }
-
   get length() {
     return this.points.length;
   }
@@ -24,12 +23,6 @@ export default class Bezier {
   addPoint (point) {
     this.points.push(point);
     this._buildFunctions();
-  }
-
-  _buildFunctions () {
-    this._functions = this.points.map((v, i) =>
-      new Bernstein(i, this.points.length - 1)
-    );
   }
 
   value (t) {
@@ -42,5 +35,11 @@ export default class Bezier {
     return this.points
       .map((v, i) => v.mulScalar(this._functions[i].derivative(t)))
       .reduce((p, c) => p.add(c), new Vector([0, 0]));
+  }
+
+  _buildFunctions () {
+    this._functions = this.points.map((v, i) =>
+        new Bernstein(this.points.length - 1, i)
+    );
   }
 }

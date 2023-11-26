@@ -1,35 +1,34 @@
-export default class Bernstein {
+import {Utils} from "./utils.js";
 
-  constructor (v, n) {
-    if (v > n) {
+export default class Bernstein {
+  #function;
+  #derivative;
+
+  /**
+   * Create a Bernstein polynomial of degree n.
+   */
+  constructor (n, k) {
+    if (k > n) {
       throw new Error("v must not be greater than n")
     }
-    this._f = Bernstein.build(v, n);
-    this._d = Bernstein.buildDerivative(v, n);
+    this.#function = this.#build(k, n);
+    this.#derivative = this.#buildDerivative(k, n);
   }
 
   value (x) {
-    return this._f(x);
+    return this.#function(x);
   }
 
   derivative (x) {
-    return this._d(x);
+    return this.#derivative(x);
   }
 
-  static buildDerivative(v, n) {
-    return x => n * (Bernstein.build(v - 1, n - 1)(x) - Bernstein.build(v, n - 1)(x));
+  #buildDerivative(k, n) {
+    return x => n * (this.#build(k - 1, n - 1)(x) - this.#build(k, n - 1)(x));
   }
 
-  static build (v, n) {
-    return x => Bernstein.binomial(n, v) * x ** v * (1 - x) ** (n - v);
+  #build (k, n) {
+    return x => Utils.binomial(n, k) * x ** k * (1 - x) ** (n - k);
   }
 
-  static factorial (n) {
-    if (n === 0) return 1;
-    return n * this.factorial(n - 1);
-  }
-
-  static binomial (n, k) {
-    return this.factorial(n) / (this.factorial(k) * this.factorial(n - k))
-  }
 }
