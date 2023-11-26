@@ -1,5 +1,6 @@
 import { Spline } from "./index.js";
 import {length, subtract} from "./vector.js";
+import {identity} from "./matrix.js";
 
 
 export default class Bezier2d {
@@ -68,7 +69,7 @@ export default class Bezier2d {
     for (let ci = 0; ci < spline.curves.length; ci++) {
       const curve = spline.curves[ci];
       for (let pi = 0; pi < curve.points.length; pi++) {
-        const isIntersection = length(subtract(position, curve.points[pi])) <= this.width;
+        const isIntersection = length(subtract(position, curve.points[pi])) <= this.pointRadius;
         if (isIntersection) {
           return {ci, pi}
         }
