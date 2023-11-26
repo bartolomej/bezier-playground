@@ -23,7 +23,7 @@ button {
 }
 
 button.focused {
-    background: #457B9D;
+    background: #6a6969;
 }
 
 input[type="color"], input[type="number"] {
@@ -40,7 +40,7 @@ input[type="color"], input[type="number"] {
     top: 0;
     left: 0;
     right: 0;
-    background: #1D3557;
+    background: #afbaca;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
