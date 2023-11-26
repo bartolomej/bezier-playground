@@ -1,6 +1,7 @@
 import { Application } from "./application.js";
 import { Spline } from "./index.js";
 import Bezier2d from "./bezier-2d.js";
+import {subtract} from "./vector.js";
 
 
 const AppState = {
@@ -156,7 +157,7 @@ class App extends Application {
 
       const intersection = this.focusedSpline.getCurveIntersection(position);
       if (intersection !== null && prevMousePosition !== null) {
-        const positionChange = currMousePosition.sub(prevMousePosition);
+        const positionChange = subtract(currMousePosition, prevMousePosition);
         this.focusedSpline.addPosition(positionChange);
       }
     }
