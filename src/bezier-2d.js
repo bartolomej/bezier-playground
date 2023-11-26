@@ -6,7 +6,7 @@ export default class Bezier2d {
 
   constructor (spline) {
     this.spline = spline || new Spline()
-    this.width = 5;
+    this.width = 1;
     this.pointRadius = 5;
     this.color = '#000000';
     this.focusedColor = '#457B9D';
@@ -39,6 +39,7 @@ export default class Bezier2d {
 
   checkPointIntersections (position) {
     const intersection = this.getPointIntersection(position);
+
     if (intersection !== null) {
       const {ci, pi} = intersection;
       this.focusedCurveIndex = ci;
@@ -53,7 +54,8 @@ export default class Bezier2d {
     const { spline, width, diff } = this;
     for (let t = 0; t < spline.size(); t += diff) {
       const diff = length(subtract(spline.value(t), position))
-      if (diff <= width) {
+      // Use larger width to make thinner curve selection easier with mouse.
+      if (diff <= (width + 5)) {
         return t;
       }
     }
