@@ -61,21 +61,21 @@ describe('Spline class tests', function () {
   it('should calculate value of spline curve', function () {
     const s = new Spline([
       new Bezier([
-        [0, 0],
-        [0, 1],
-        [0, 2],
-        [1, 2],
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 2, 0, 0],
+        [1, 2, 0, 0],
       ]),
       new Bezier([
-        [1, 2],
-        [2, 2],
-        [2, 1],
-        [2, 0],
+        [1, 2, 0, 0],
+        [2, 2, 0, 0],
+        [2, 1, 0, 0],
+        [2, 0, 0, 0],
       ])
     ])
 
-    expect(s.value(0)).toEqual([0, 0])
-    expect(s.value(1)).toEqual([1, 2])
-    expect(s.value(2)).toEqual([2, 0])
+    expect(s.value(0)).toEqual([0, 0, 0, 0])
+    expect(s.value(1)).toEqual([1, 2, 0, 0])
+    expect(s.value(2)).toEqual([2, 0, 0, 0])
   });
 })
