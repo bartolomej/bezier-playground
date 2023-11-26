@@ -1,4 +1,4 @@
-import { Transformation2D } from "../math/index.js";
+import { Transformation2D } from "./index.js";
 
 
 export class Application {

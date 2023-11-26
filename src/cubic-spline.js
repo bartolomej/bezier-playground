@@ -1,4 +1,4 @@
-import { Spline } from "../math/index.js";
+import { Spline } from "./index.js";
 
 
 export default class CubicSplineDrawer {

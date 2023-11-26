@@ -1,6 +1,6 @@
-import { Application } from "./common/application.js";
-import { Spline, Vector } from "./math/index.js";
-import CubicSplineDrawer from "./graphics/spline.js";
+import { Application } from "./application.js";
+import { Spline, Vector } from "./index.js";
+import CubicSplineDrawer from "./cubic-spline.js";
 
 
 const AppState = {
