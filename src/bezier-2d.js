@@ -2,7 +2,7 @@ import { Spline } from "./index.js";
 import {length, subtract} from "./vector.js";
 
 
-export default class CubicSplineDrawer {
+export default class Bezier2d {
 
   constructor (spline) {
     this.spline = spline || new Spline()
@@ -39,7 +39,6 @@ export default class CubicSplineDrawer {
 
   checkPointIntersections (position) {
     const intersection = this.getPointIntersection(position);
-    console.log('checking point intersection: ', intersection)
     if (intersection !== null) {
       const {ci, pi} = intersection;
       this.focusedCurveIndex = ci;
@@ -52,7 +51,6 @@ export default class CubicSplineDrawer {
 
   getCurveIntersection(position) {
     const { spline, width, diff } = this;
-    console.log('checking curve intersection')
     for (let t = 0; t < spline.size(); t += diff) {
       const diff = length(subtract(spline.value(t), position))
       if (diff <= width) {
@@ -158,7 +156,7 @@ export default class CubicSplineDrawer {
     ctx.lineWidth = width;
     ctx.strokeStyle = color;
 
-    // draw bezier curve
+    // draw approximated curve
     for (let t = 0; t < spline.size(); t += diff) {
       const v = spline.value(t);
       if (t > 0) {
@@ -172,7 +170,7 @@ export default class CubicSplineDrawer {
     ctx.lineWidth = isFocused ? 2 : 1;
     ctx.strokeStyle = isFocused ? focusedColor : controlColor
 
-    // draw bezier points
+    // draw control points
     for (let i = 0; i < spline.curves.length; i++) {
       const curve = spline.curves[i];
       for (let j = 0; j < curve.points.length; j++) {

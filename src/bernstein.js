@@ -24,11 +24,21 @@ export default class Bernstein {
   }
 
   #buildDerivative(k, n) {
-    return x => n * (this.#build(k - 1, n - 1)(x) - this.#build(k, n - 1)(x));
+    if (n === 0) {
+      // The derivative of a constant (b_{0,0}) is 0
+      return x => 0;
+    }
+
+    // Handle edge cases where the Bernstein polynomial is 0
+    const b1 = (k - 1 < 0) ? () => 0 : this.#build(k - 1, n - 1);
+    const b2 = (k > n - 1) ? () => 0 : this.#build(k, n - 1);
+
+    return x => n * (b1(x) - b2(x));
   }
 
   #build (k, n) {
-    return x => Utils.binomial(n, k) * x ** k * (1 - x) ** (n - k);
+    const binom = Utils.binomial(n, k);
+    return x => binom * x ** k * (1 - x) ** (n - k);
   }
 
 }

@@ -10,7 +10,7 @@ export default class Bezier {
    */
   constructor (points = []) {
     this.points = points;
-    this._buildFunctions();
+    this.#buildFunctions();
   }
 
   get lastPointIndex() {
@@ -28,7 +28,7 @@ export default class Bezier {
 
   addPoint (point) {
     this.points.push(point);
-    this._buildFunctions();
+    this.#buildFunctions();
   }
 
   /**
@@ -49,7 +49,7 @@ export default class Bezier {
       .reduce((p, c) => add(p, c), initZeroVector(this.dimension));
   }
 
-  _buildFunctions () {
+  #buildFunctions () {
     this._functions = this.points.map((v, i) =>
         new Bernstein(this.points.length - 1, i)
     );

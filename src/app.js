@@ -1,6 +1,6 @@
 import { Application } from "./application.js";
 import { Spline } from "./index.js";
-import CubicSplineDrawer from "./cubic-spline.js";
+import Bezier2d from "./bezier-2d.js";
 
 
 const AppState = {
@@ -124,7 +124,7 @@ class App extends Application {
 
     if (this.state === AppState.DRAW) {
       if (this.focusedSpline === null) {
-        this.splines.push(new CubicSplineDrawer(new Spline()))
+        this.splines.push(new Bezier2d(new Spline()))
         this.focusedSplineIndex = this.splines.length - 1;
       }
       this.focusedSpline.addPoint(position);
